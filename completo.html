@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apostila de Lógica de Programação</title>
+    <style>
+        :root {
+            --bg-dark: #1e1e2e;
+            --sidebar-bg: #181825;
+            --accent: #cba6f7; /* Lilás */
+            --text-main: #cdd6f4;
+            --code-bg: #11111b;
+            --keyword: #f38ba8;
+            --string: #a6e3a1;
+            --function: #89b4fa;
+            --comment: #6c7086;
+            --number: #fab387;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        /* --- MENU LATERAL --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #313244;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(45deg, #45475a, #313244);
+            text-align: center;
+            border-bottom: 1px solid #45475a;
+        }
+
+        .sidebar-header h2 { font-size: 1.1rem; color: var(--accent); margin-bottom: 5px; }
+        .sidebar-header p { font-size: 0.8rem; opacity: 0.8; }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            padding: 15px 20px;
+            text-align: left;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .menu-btn:hover { background-color: #313244; }
+        
+        .menu-btn.active {
+            background-color: #313244;
+            border-left-color: var(--accent);
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* --- ÁREA PRINCIPAL --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            background-image: radial-gradient(#313244 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* --- SLIDE (FOLHA) --- */
+        .slide {
+            width: 1100px; /* Aumentei um pouco a largura para caber mais código */
+            height: 750px; /* Altura aumentada para caber o conteúdo completo */
+            background-color: #262636;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            position: relative;
+            border: 1px solid #45475a;
+        }
+
+        .slide.active { display: flex; animation: fadeIn 0.3s; }
+
+        .slide-header {
+            background-color: #11111b;
+            padding: 15px 30px;
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .slide-title { font-size: 1.4rem; color: var(--accent); font-weight: 700; }
+        .slide-number { font-size: 0.8rem; background: var(--accent); color: #111; padding: 4px 10px; border-radius: 4px; font-weight: bold; }
+
+        /* Corpo do Slide com Scroll */
+        .slide-body {
+            padding: 25px;
+            flex: 1;
+            overflow-y: auto; /* Permite rolar se o conteúdo for grande */
+            display: flex;
+            gap: 20px;
+        }
+
+        .concept-col { flex: 0.8; padding-right: 10px; font-size: 0.9rem; line-height: 1.6; color: #bac2de; }
+        .concept-col h3 { color: #89b4fa; margin: 20px 0 10px 0; border-left: 4px solid #89b4fa; padding-left: 10px; }
+        .concept-col h3:first-child { margin-top: 0; }
+        .concept-col p { margin-bottom: 10px; text-align: justify; }
+        .concept-col ul { padding-left: 20px; margin-bottom: 15px; }
+        .concept-col li { margin-bottom: 5px; }
+
+        .code-col { flex: 1.2; display: flex; flex-direction: column; }
+        
+        .code-box {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            color: #cdd6f4;
+            overflow-x: auto;
+            border: 1px solid #313244;
+            white-space: pre; /* Mantém a formatação original do código */
+            height: 100%;
+        }
+
+        .slide-footer {
+            padding: 10px 30px;
+            background-color: #11111b;
+            text-align: right;
+            font-size: 0.8rem;
+            color: #6c7086;
+            border-top: 1px solid #313244;
+            flex-shrink: 0;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Syntax Highlighting */
+        .kw { color: var(--keyword); font-weight: bold; }
+        .str { color: var(--string); }
+        .fn { color: var(--function); }
+        .cmt { color: var(--comment); font-style: italic; }
+        .num { color: var(--number); }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #181825; }
+        ::-webkit-scrollbar-thumb { background: #45475a; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>Lógica de Programação</h2>
+            <p>Prof. Paula</p>
+        </div>
+        <button class="menu-btn active" onclick="showSlide('aula01')">01. Variáveis</button>
+        <button class="menu-btn" onclick="showSlide('aula02')">02. Input & Switch</button>
+        <button class="menu-btn" onclick="showSlide('aula03')">03. Funções & Lógica</button>
+        <button class="menu-btn" onclick="showSlide('aula04')">04. Operadores</button>
+        <button class="menu-btn" onclick="showSlide('aula05')">05. Loops (Laços)</button>
+        <button class="menu-btn" onclick="showSlide('aula06a')">06. Regex</button>
+        <button class="menu-btn" onclick="showSlide('aula06b')">06. Try/Catch</button>
+        <button class="menu-btn" onclick="showSlide('aula07')">07. Arrays</button>
+        <button class="menu-btn" onclick="showSlide('aula08')">08. Funções Avançadas</button>
+        <button class="menu-btn" onclick="showSlide('aula09')">09. JSON</button>
+        <button class="menu-btn" onclick="showSlide('aula10')">10. Op. Lógicos (Profundo)</button>
+        <button class="menu-btn" onclick="showSlide('aula11')">11. Strings</button>
+        <button class="menu-btn" onclick="showSlide('aula12')">12. Math</button>
+    </nav>
+
+    <div class="main-content">
+
+        <div id="aula01" class="slide active">
+            <div class="slide-header">
+                <span class="slide-title">Aula 01 - Variáveis e Tipos</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>Declaração de Variáveis</h3>
+                    <p><strong>let:</strong> Variável com escopo de bloco (mais seguro e moderno).</p>
+                    <p><strong>const:</strong> Valor constante, não pode ser alterado depois de definido.</p>
+                    <p><strong>var:</strong> Forma antiga (pré-ES6), tem escopo de função e pode causar bugs.</p>
+                    
+                    <h3>Tipos de Dados</h3>
+                    <ul>
+                        <li>string (texto)</li>
+                        <li>number (inteiro ou decimal)</li>
+                        <li>boolean (verdadeiro/falso)</li>
+                    </ul>
+
+                    <h3>Template Literal</h3>
+                    <p>Forma moderna de escrever textos usando crase (` `) e ${}.</p>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+// let → variável com escopo de bloco
+let idade = 99;
+
+// const → valor constante
+const nome = "Paula";
+
+// Exibe nome e idade (concatenação tradicional)
+console.log("Nome: " + nome + " | Idade: " + idade);
+
+// Tentar mudar const gera erro:
+// nome = "Tais"; // ❌ Erro!
+
+// --- DIFERENÇA VAR, LET, CONST ---
+var a = 20;
+var b = 20;
+var soma = a + b;
+
+if (soma === 40) {
+    console.log("É quarenta");
+}
+
+let adulto = false;
+if (adulto) {
+    console.log("Pode votar");
+}
+
+// --- EXERCÍCIO: BOATE COM MATINÊ ---
+// Regras: 15-17 (matinê), 18+ (boate), <15 (pracinha)
+idade = 16;
+
+if (idade >= 15 && idade <= 17) {
+    console.log("Olá " + nome + ", pode ir na matinê!");
+} else if (idade >= 18) {
+    console.log(`Olá ${nome}, pode entrar na boate!`);
+} else {
+    console.log("Olá " + nome + ", vai para a pracinha.");
+}
+
+// --- TEMPLATE LITERAL ---
+const frase = `Meu nome é ${nome} e tenho ${idade} anos.`;
+console.log(frase);
+
+// --- CURIOSIDADE: VÍRGULA ---
+// Retorna apenas a última expressão
+const resultado = ("Oi", "Olá", "Bem-vindo!");
+console.log(resultado); // Bem-vindo!
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula02" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 02 - Input e Switch</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>Entrada de Dados</h3>
+                    <p>O módulo <code>readline</code> permite receber dados do usuário pelo terminal.</p>
+                    
+                    <h3>Funções</h3>
+                    <p>São "caixas de ações". Podemos chamar várias vezes com diferentes parâmetros.</p>
+
+                    <h3>Switch Case</h3>
+                    <p>Verifica qual valor foi digitado comparando com "casos" (case). Ótimo para menus.</p>
+                    <p>Use <code>break</code> para parar e <code>default</code> para opções inválidas.</p>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+const readline = require('readline');
+
+// Interface de leitura
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// --- FUNÇÕES ---
+function comprar(item){
+    console.log(`Escolhendo: ${item}`);
+    console.log(`Pagando: ${item}`);
+    console.log(`Recebendo: ${item}`);
+}
+
+let item = "sapato";
+comprar(item);
+
+// --- SWITCH E INPUT ---
+rl.question('Escolha uma vogal: ', (vogal) => {
+  switch (vogal) {
+    case "a":
+        console.log("Escolheu A");
+        break;
+    case "e":
+        console.log("Escolheu E");
+        break;
+    case "i":
+        console.log("Escolheu I");
+        break;
+    case "o":
+        console.log("Escolheu O");
+        break;
+    case "u":
+        console.log("Escolheu U");
+        break;
+    default:
+        console.log("Não é uma vogal");
+        break;
+  }
+  rl.close();
+});
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula03" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 03 - Prática de Lógica</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>Retorno de Funções</h3>
+                    <p>Funções podem processar e <strong>retornar</strong> um valor para quem chamou.</p>
+                    
+                    <h3>Lógica Mista</h3>
+                    <p>Podemos usar <code>if/else</code> para categorizar (ex: faixas etárias) e depois um <code>switch</code> para agir sobre essa categoria.</p>
+                    
+                    <h3>Exercícios</h3>
+                    <p>Esta aula foca em exercícios práticos como verificador de idade e calculadora.</p>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+const { resourceUsage } = require("process");
+
+// Função com retorno
+function verificaIdade(idade) {
+    if (idade >= 18) return "Maior de idade.";
+    return "Menor de idade.";
+}
+// console.log(verificaIdade(20));
+
+// --- CLASSIFICAR FAIXA ETÁRIA ---
+function faixaEtaria(idade) {
+    let faixa = ''
+    if (idade <= 12) faixa = 'criança'
+    else if (idade <= 17) faixa = 'adolescente'
+    else if (idade <= 59) faixa = 'adulto'
+    else faixa = 'idoso'
+
+    switch (faixa) {
+        case 'criança': console.log('Você é uma criança!')
+            break
+        case 'adolescente': console.log('Você é um adolescente!')
+            break
+        case 'adulto': console.log('Você é um adulto!')
+            break
+        case 'idoso': console.log('Você é um idoso!')
+            break
+    }
+}
+// faixaEtaria(5)
+
+// --- CALCULADORA ---
+const readline = require('readline')
+const rl = readline.createInterface({input: process.stdin, output: process.stdout});
+
+function calculadora(num1, operador, num2) {
+    let resultado;
+    switch (operador) {
+        case "+": resultado = num1 + num2; break
+        case "-": resultado = num1 - num2; break
+        case "/": resultado = num2 !== 0 ? num1 / num2 : "Erro div 0"; break
+        case "*": resultado = num1 * num2; break
+        default: resultado = 'Operação inválida'
+    }
+    return resultado
+}
+
+rl.question("Num 1: ", (n1) => {
+  rl.question("Op (+, -, *, /): ", (op) => {
+    rl.question("Num 2: ", (n2) => {
+      console.log("Resultado:", calculadora(parseFloat(n1), op, parseFloat(n2))) 
+      rl.close();
+    });
+  });
+});
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula04" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 04 - Operadores</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>Matemáticos</h3>
+                    <p>Soma, subtração, multiplicação, divisão, resto (%) e potência (**).</p>
+
+                    <h3>Lógicos</h3>
+                    <ul>
+                        <li><strong>&& (AND):</strong> Tudo true.</li>
+                        <li><strong>|| (OR):</strong> Pelo menos um true.</li>
+                        <li><strong>! (NOT):</strong> Inverte.</li>
+                    </ul>
+
+                    <h3>Relacionais</h3>
+                    <p>Comparação de valores. Atenção ao <code>===</code> que compara valor E tipo.</p>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+// --- MATEMÁTICOS ---
+let a = 9, b = 12;
+
+console.log("Soma:", a + b);
+console.log("Subtração:", b - a);
+console.log("Multiplicação:", a * b);
+console.log("Divisão:", b / a);
+console.log("Resto:", b % a); // 3
+console.log("Potência:", a ** b); 
+
+// --- LÓGICOS ---
+let temCNH = false;
+let temRG = true;
+
+// AND (&&)
+if (temCNH && temRG) console.log("Docs válidos");
+
+// OR (||)
+if (temCNH || temRG) console.log("Tem algum doc");
+
+// NOT (!)
+if (!temCNH) console.log("NÃO tem CNH");
+
+// --- RELACIONAIS ---
+// == valor, === valor e tipo
+let comparar = 5 === "5"; // false (number vs string)
+console.log("5 === '5'?", comparar);
+
+if (a % 2 === 0) console.log(a + " é par");
+else console.log(a + " é ímpar");
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula05" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 05 - Laços de Repetição</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>FOR (Controle Fixo)</h3>
+                    <p>Executa um número conhecido de vezes. <br>Estrutura: <code>(início; condição; passo)</code>.</p>
+                    
+                    <h3>WHILE (Enquanto)</h3>
+                    <p>Executa enquanto a condição for verdadeira. Ideal quando não sabemos o fim.</p>
+                    
+                    <h3>DO...WHILE</h3>
+                    <p>Executa primeiro, verifica depois. Garante pelo menos uma execução.</p>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+// --- FOR ---
+// De 0 a 4
+for (let i = 0; i < 5; i++) {
+  console.log("Número: " + i);
+}
+
+// De 1 a 6 (inclusive)
+for (let i = 1; i <= 6; i++) {
+  console.log("Número: " + i);
+}
+
+console.log("===");
+
+// --- WHILE ---
+let count = 0;
+
+while (count < 5) {
+  console.log("Contando: " + count);
+  count++;
+}
+
+console.log("===");
+
+// --- DO...WHILE ---
+let check = 10;
+
+do {
+  console.log("Checando: " + check);
+  check++;
+} while (check < 5);
+// Executa 1 vez mesmo sendo falso (10 não é < 5)
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula06a" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 06 - Expressões Regulares</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>O que é Regex?</h3>
+                    <p>Padrão para buscar, validar ou substituir texto.</p>
+                    
+                    <h3>Símbolos</h3>
+                    <ul>
+                        <li><code>\d</code>: Dígito</li>
+                        <li><code>^ / $</code>: Início / Fim</li>
+                        <li><code>{n}</code>: Quantidade</li>
+                        <li><code>[ ]</code>: Conjunto</li>
+                    </ul>
+
+                    <h3>Usos</h3>
+                    <p>Validação de CEP, E-mail, Senha forte e substituição de palavras.</p>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+const regexNumero4Digitos = /^\d{4}$/;
+// console.log(regexNumero4Digitos.test("1234")); // true
+
+const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const regexCep = /^\d{5}-\d{3}$/;
+
+// --- SUBSTITUIÇÃO ---
+const frase = "Você é um idiota!";
+const regexOfensiva = /idiota/i; // i = case insensitive
+console.log(frase.replace(regexOfensiva, "****"));
+
+// --- BUSCA DATAS ---
+const texto = "Hoje é 08/07/2025. Amanhã 09/07/2025.";
+const regexDatas = /\d{2}\/\d{2}\/\d{4}/g;
+// console.log(texto.match(regexDatas));
+
+// --- SENHA FORTE ---
+// Minúsculas, maiúsculas, números, símbolos, min 8 chars
+const regexSenhaForte = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+
+// --- EXERCÍCIOS ---
+// Telefone (99) 99999-9999
+const regextel = /^\d{2}\s\d{5}-\d{4}$/;
+console.log(regextel.test("15 99781-7243"))
+
+// Nome (min 2 palavras)
+const regexname = /^[A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+)+$/
+console.log(regexname.test("Taís Santos"));
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula06b" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 06 - Try / Catch</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>Tratamento de Erros</h3>
+                    <p>Impede que o código quebre completamente ao encontrar um erro.</p>
+                    <ul>
+                        <li><code>try</code>: Código que pode falhar.</li>
+                        <li><code>catch</code>: Captura e trata o erro.</li>
+                        <li><code>throw</code>: Lança um erro manual.</li>
+                    </ul>
+                    <p>Útil para validações, parse de JSON e acesso a objetos nulos.</p>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+// 1. Objeto nulo
+const usuario = null;
+try {
+    console.log(usuario.nome);
+} catch (erro) {
+    console.warn("Erro ao acessar:", erro.message);
+}
+
+// 2. JSON Inválido
+const jsonInvalido = "{ nome: 'João' }"; // Falta aspas
+try {
+    const obj = JSON.parse(jsonInvalido);
+} catch (erro) {
+    console.error("Erro JSON:", erro.message);
+}
+
+// 3. Erro Manual (Throw)
+function dividir(a, b) {
+    if (typeof a !== "number") throw new Error("Apenas números");
+    if (b === 0) throw new Error("Divisão por zero");
+    return a / b;
+}
+
+try {
+    dividir(10, 0);
+} catch (erro) {
+    console.error("Erro dividir:", erro.message);
+}
+
+// 4. Regex + Try/Catch
+function validarEmail(email) {
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regexEmail.test(email)) throw new Error("E-mail inválido!");
+    return true;
+}
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula07" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 07 - Arrays</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>Listas Ordenadas</h3>
+                    <p>Armazenam vários valores. Índice começa em 0.</p>
+                    
+                    <h3>Métodos Principais</h3>
+                    <ul>
+                        <li><code>push/pop</code>: Fim.</li>
+                        <li><code>unshift/shift</code>: Início.</li>
+                        <li><code>includes/indexOf</code>: Busca.</li>
+                        <li><code>slice</code>: Cortar.</li>
+                        <li><code>splice</code>: Remover/Alterar.</li>
+                        <li><code>join</code>: Virar string.</li>
+                    </ul>
+
+                    <h3>Loops em Arrays</h3>
+                    <p>Percorrer para somar, filtrar ou exibir dados.</p>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+let frutas = ["maçã", "banana", "uva", "laranja"];
+console.log(frutas[0]); // maçã
+
+// Adicionar/Remover
+frutas.push("melancia"); // Fim
+frutas.pop(); 
+frutas.shift(); // Remove do início
+frutas.unshift("abacaxi"); // Adiciona no início
+
+// Busca
+console.log(frutas.includes("uva")); // true
+console.log(frutas.indexOf("banana")); // Índice
+
+// Manipulação
+let favoritas = frutas.slice(1, 3); // Cópia parcial
+frutas.splice(1, 2); // Remove 2 a partir do índice 1
+console.log(frutas.join(", ")); // String única
+frutas.reverse();
+frutas.sort();
+
+// --- LOOPS ---
+let nomes = ["Ana", "Carlos", "Julia"];
+for (let i = 0; i < nomes.length; i++) {
+  console.log("Nome:", nomes[i]);
+}
+
+// Soma
+let numeros = [10, 20, 30, 40];
+let soma = 0;
+for (let i = 0; i < numeros.length; i++) {
+  soma += numeros[i];
+}
+console.log("Soma:", soma);
+
+// Filtro (Pares)
+let lista = [3, 8, 15, 22];
+for (let i = 0; i < lista.length; i++) {
+  if (lista[i] % 2 === 0) console.log("Par:", lista[i]);
+}
+
+// Média
+let notas = [7, 8.5, 9, 6.5];
+let total = 0;
+for (let i=0; i < notas.length; i++) total += notas[i];
+console.log("Média:", total / notas.length);
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula08" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 08 - Funções Avançadas</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>Conceitos</h3>
+                    <p>Funções reutilizam código. Nomeie com verbos (ex: <code>calcular</code>).</p>
+                    <p><strong>Parâmetros Padrão:</strong> Evita "undefined" definindo valores default.</p>
+                    <p><strong>Retorno:</strong> <code>return</code> devolve valor e encerra a função.</p>
+                    <p><strong>Callbacks:</strong> Funções passadas como argumento para rodar depois (síncrona ou assíncrona).</p>
+                    <p><strong>Arrow Functions:</strong> Sintaxe curta <code>(n) => n * 2</code>.</p>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+// Declaração
+function saudacao() {
+  console.log("Olá! Bem-vindo.");
+}
+saudacao();
+
+// Parâmetros Default
+function apresentar(nome, idade = 0) {
+  console.log(`Sou ${nome}, ${idade} anos.`);
+}
+apresentar("Paula", 98);
+apresentar("João"); // idade = 0
+
+// Retorno (Objeto)
+function dividir(dividendo, divisor) {
+  if (divisor === 0) return { ok: false, erro: "Divisão por zero" };
+  return { ok: true, res: dividendo / divisor };
+}
+console.log(dividir(17, 5));
+
+// Expressão e Arrow
+const dobrar = function (n) { return n * 2; };
+const triplicar = (n) => n * 3;
+
+// Callbacks Síncronos
+function executar(a, b, operacao) {
+  return operacao(a, b);
+}
+console.log(executar(10, 5, (x, y) => x - y)); // 5
+
+// Callback Assíncrono (Timer)
+console.log("Início");
+setTimeout(() => {
+  console.log("Rodou após 500ms");
+}, 500);
+console.log("Fim");
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula09" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 09 - JSON</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>O que é JSON?</h3>
+                    <p>Formato de texto para dados. Muito usado em APIs.</p>
+                    <ul>
+                        <li>Chaves entre aspas duplas.</li>
+                        <li>Valores: strings, números, arrays, objetos, booleans.</li>
+                        <li>Não aceita funções ou undefined.</li>
+                    </ul>
+
+                    <h3>Manipulação</h3>
+                    <p><strong>JSON.parse():</strong> Transforma texto em objeto (para usar no código).</p>
+                    <p><strong>JSON.stringify():</strong> Transforma objeto em texto (para enviar/salvar).</p>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+// String JSON
+const pessoaJSON = `{
+  "nome": "Paula",
+  "idade": 98,
+  "ativo": true,
+  "cursos": ["JS", "Python"]
+}`;
+
+// Parse (Texto -> Objeto)
+const pessoaObj = JSON.parse(pessoaJSON);
+console.log(pessoaObj.nome); // "Paula"
+pessoaObj.idade += 1; // Podemos editar agora
+
+// Stringify (Objeto -> Texto)
+const objJS = { nome: "João", idade: 35 };
+const objJSON = JSON.stringify(objJS);
+console.log(objJSON); 
+// '{"nome":"João","idade":35}'
+
+// Arrays e Objetos Aninhados
+const dadosJSON = `{
+  "usuarios": [
+    { "nome": "Ana", "idade": 22 },
+    { "nome": "Carlos", "idade": 30 }
+  ]
+}`;
+const dadosObj = JSON.parse(dadosJSON);
+console.log(dadosObj.usuarios[0].nome); // "Ana"
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula10" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 10 - Operadores Lógicos</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>Conceito</h3>
+                    <p>Combinam ou invertem condições booleanas.</p>
+                    <ul>
+                        <li><strong>&& (AND):</strong> Todas condições verdadeiras.</li>
+                        <li><strong>|| (OR):</strong> Pelo menos uma verdadeira.</li>
+                        <li><strong>! (NOT):</strong> Inverte (True vira False).</li>
+                    </ul>
+                    <p>Use parênteses para organizar lógicas complexas.</p>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+const idade = 20;
+const possuiCarteira = true;
+
+// AND (&&)
+// Maior de idade E tem carteira
+console.log(idade >= 18 && possuiCarteira); // true
+
+// OR (||)
+// Menor de idade OU tem carteira
+console.log(idade < 18 || possuiCarteira); // true
+
+// NOT (!)
+console.log(!possuiCarteira); // false
+
+// Combinação
+// (idade >= 18 && possuiCarteira) || autorizacaoPais
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula11" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 11 - Métodos de String</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>Manipulação de Texto</h3>
+                    <p>Strings são imutáveis (métodos retornam nova string).</p>
+                    
+                    <h3>Métodos Comuns</h3>
+                    <ul>
+                        <li><code>length</code>: Tamanho.</li>
+                        <li><code>toUpperCase/Lower</code>: Caixa alta/baixa.</li>
+                        <li><code>includes</code>: Verifica existência.</li>
+                        <li><code>replace</code>: Substitui.</li>
+                        <li><code>substring</code>: Pega um pedaço.</li>
+                        <li><code>split</code>: Divide em array.</li>
+                    </ul>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+const nome = "Paula Lima";
+
+// Tamanho
+console.log(nome.length); // 10
+
+// Maiúsculas/Minúsculas
+console.log(nome.toUpperCase()); // "PAULA LIMA"
+console.log(nome.toLowerCase()); // "paula lima"
+
+// Procurar e Substituir
+console.log(nome.includes("Paula")); // true
+console.log(nome.replace("Paula", "Joana")); // "Joana Lima"
+
+// Cortar e Dividir
+console.log(nome.substring(0, 5)); // "Paula"
+console.log(nome.split(" ")); // ["Paula", "Lima"]
+
+// Concatenar
+console.log(`${nome}, seja bem-vinda!`);
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+        <div id="aula12" class="slide">
+            <div class="slide-header">
+                <span class="slide-title">Aula 12 - Objeto Math</span>
+                <span class="slide-number">Módulo 1</span>
+            </div>
+            <div class="slide-body">
+                <div class="concept-col">
+                    <h3>Matemática</h3>
+                    <p>Objeto global para cálculos. Não precisa instanciar.</p>
+                    
+                    <h3>Métodos Úteis</h3>
+                    <ul>
+                        <li><code>round/floor/ceil</code>: Arredondamento.</li>
+                        <li><code>random</code>: Número aleatório (0 a 1).</li>
+                        <li><code>pow/sqrt</code>: Potência e Raiz.</li>
+                        <li><code>abs</code>: Valor absoluto (sem sinal).</li>
+                        <li><code>min/max</code>: Mínimo e Máximo.</li>
+                    </ul>
+                </div>
+                <div class="code-col">
+                    <pre class="code-box">
+console.log(Math.PI);     // 3.1415...
+
+// Arredondamento
+console.log(Math.round(4.7)); // 5
+console.log(Math.floor(4.7)); // 4 (Chão)
+console.log(Math.ceil(4.2));  // 5 (Teto)
+
+// Aleatórios
+console.log(Math.random()); 
+console.log(Math.floor(Math.random() * 10)); // 0 a 9
+
+// Potência e Raiz
+console.log(Math.pow(2, 3)); // 8
+console.log(Math.sqrt(25));  // 5
+
+// Absoluto
+console.log(Math.abs(-10)); // 10
+
+// Limites
+console.log(Math.max(3, 7, 1)); // 7
+console.log(Math.min(3, 7, 1)); // 1
+                    </pre>
+                </div>
+            </div>
+            <div class="slide-footer">Curso de Lógica de Programação</div>
+        </div>
+
+    </div>
+
+<script>
+        // Função para alternar os slides
+        function showSlide(slideId) {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+
+            const activeSlide = document.getElementById(slideId);
+            if (activeSlide) activeSlide.classList.add('active');
+            
+            const buttons = document.querySelectorAll('.menu-btn');
+            buttons.forEach(btn => {
+                if(btn.getAttribute('onclick').includes(slideId)) btn.classList.add('active');
+            });
+        }
+
+        // --- HIGHLIGHTER INTELIGENTE ---
+        function highlightCode() {
+            const boxes = document.querySelectorAll('.code-box');
+            
+            boxes.forEach(box => {
+                let html = box.innerText; 
+                
+                // 1. Segurança: Escapar HTML básico
+                html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+                // Arrays para guardar o conteúdo que não deve ser colorido internamente
+                const strings = [];
+                const comments = [];
+
+                // 2. ESCONDER STRINGS (Protege conteúdo entre aspas ou crase)
+                // Substitui "texto" por ___STR0___
+                html = html.replace(/(["'`])([\s\S]*?)\1/g, function(match) {
+                    strings.push(match); 
+                    return `___STR${strings.length-1}___`; 
+                });
+
+                // 3. ESCONDER COMENTÁRIOS (Protege a linha inteira do //)
+                // Substitui // texto... por ___CMT0___
+                html = html.replace(/(\/\/.*)/g, function(match) {
+                    comments.push(match);
+                    return `___CMT${comments.length-1}___`;
+                });
+
+                // --- ZONA DE PINTURA (O que sobrou é código puro) ---
+
+                // Keywords (Palavras reservadas)
+                const keywords = /\b(let|const|var|function|return|if|else|switch|case|break|default|for|while|do|try|catch|throw|new|typeof|class|require|import|from)\b(?!=)/g;
+                html = html.replace(keywords, '<span class="kw">$1</span>');
+
+                // Funções (palavra antes de parenteses)
+                html = html.replace(/\b([a-zA-Z_]\w*)(?=\()/g, '<span class="fn">$1</span>');
+
+                // Números
+                html = html.replace(/\b(\d+(\.\d+)?)\b/g, '<span class="num">$1</span>');
+
+                // --- RESTAURAÇÃO ---
+
+                // 4. Devolver COMENTÁRIOS (Tudo cinza, sem pintar o que tem dentro)
+                html = html.replace(/___CMT(\d+)___/g, function(match, id) {
+                    return `<span class="cmt">${comments[id]}</span>`;
+                });
+
+                // 5. Devolver STRINGS (Tudo verde/amarelo)
+                html = html.replace(/___STR(\d+)___/g, function(match, id) {
+                    return `<span class="str">${strings[id]}</span>`;
+                });
+
+                box.innerHTML = html;
+            });
+        }
+
+        window.onload = highlightCode;
+    </script>
+</body>
+</html>
